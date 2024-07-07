@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta etiketleri sayfanın karakter seti ve görüntüleme ayarları için -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Harici CSS dosyaları -->
+    <link rel="stylesheet" href="/static/css/profile.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+        crossorigin="anonymous" />
+    <!-- JavaScript dosyası -->
+    <script src="/static/js/login.js"></script>
+</head>
+
+<body>
+    <!-- Yan menü başlangıcı -->
+    <div class="sidebar">
+        <img src="/static/images/hüpe.png" alt="Hüpe" class="sidebar__icon" />
+        <!-- Ana Sayfa -->
+        <form action="/home" method="get">
+            <button class="sidebarOption">
+                <span class="material-icons">home</span>
+                <h2>Ana Sayfa</h2>
+            </button>
+        </form>
+        <!-- Keşfet -->
+        <form action="/" method="get">
+            <button class="sidebarOption">
+                <span class="material-icons">search</span>
+                <h2>Keşfet</h2>
+            </button>
+        </form>
+        <form action="/profile/likes" method="get">
+            <button class="sidebarOption">
+                <span class="material-icons">favorite</span>
+                <h2>Beğenileriniz</h2>
+            </button>
+        </form>
+        <!-- Profil (aktif sayfa) -->
+        <form action="/profile" method="get">
+            <button type="submit" class="sidebarOption active">
+                <span class="material-icons">perm_identity</span>
+                <h2>Profil</h2>
+            </button>
+        </form>
+
+        <!-- Çıkış Yap -->
+        <form action="/logout" method="get">
+            <button type="submit" class="sidebarOption">
+                <span class="material-icons">logout</span>
+                <h2>Çıkış Yap</h2>
+            </button>
+        </form>
+    </div>
+    <!-- Yan menü sonu -->
+
+    <!-- İçerik başlangıcı -->
+    <div class="feed">
+        <div class="feed__header">
+            <h2>Profil</h2>
+        </div>
+
+        <!-- Profil Bölümü Başlangıcı -->
+        <div class="profile">
+            <!-- Banner Resmi -->
+            <div class="profile__banner">
+                <img src="data:image/png;base64,{{.User.BannerImage}}" alt="Banner Resmi" />
+            </div>
+            <!-- Profil Bilgisi -->
+            <div class="profile__info">
+                <!-- Profil Resmi -->
+                <div class="profile__picture">
+                    <img src="data:image/png;base64,{{.User.ProfileImage}}" alt="Profil Resmi" />
+                </div>
+                <!-- Kullanıcı Bilgisi -->
+                <div class="profile__details">
+                    <h2>{{.User.Name}} {{.User.Surname}}</h2>
+                    <h3>@{{.User.Username}}</h3>
+                    {{if .User.Biography}}
+                    <p>{{.User.Biography}}</p>
+                    {{end}}
+                    <button class="profile__editButton" onclick="openEditProfile()">Profili Düzenle</button>
+                </div>
+            </div>
+            <!-- Profil Düzenleme Modalı -->
+            <div class="modal" id="editProfileModal">
+                <div class="modal__content">
+                    <span class="close" onclick="closeEditProfile()">&times;</span>
+                    <h2>Profili Düzenle</h2>
+                    <form enctype="multipart/form-data" action="/editProfile" method="post" class="modal__form">
+                        <div class="modal__section">
+                            <h3>Fotoğraf</h3>
+                            <label for="profilePicture">Profil Fotoğrafı</label>
+                            <input type="file" id="profilePicture" name="profilePicture" accept="image/*" />
+                            <label for="bannerPicture">Banner Fotoğrafı</label>
+                            <input type="file" id="bannerPicture" name="bannerPicture" accept="image/*" />
+                        </div>
+                        <div class="modal__section">
+                            <h3>Kullanıcı Bilgisi</h3>
+                            <label for="username">Kullanıcı Adı</label>
+                            <input type="text" id="username" name="username" value="{{.User.Username}}" />
+                            <label for="firstName">İsim</label>
+                            <input type="text" id="firstName" name="name" value="{{.User.Name}}" />
+                            <label for="lastName">Soyisim</label>
+                            <input type="text" id="lastName" name="surname" value="{{.User.Surname}}" />
+                            <label for="bio">Biyografi</label>
+                            <textarea id="bio" name="bio">{{.User.Biography}}</textarea>
+                            <label for="email">E-posta</label>
+                            <input type="email" id="email" name="email" value="{{.User.Email}}" />
+                        </div>
+                        <div class="modal__section">
+                            <h3>Güvenlik</h3>
+                            <label for="oldPassword">Eski Şifre</label>
+                            <input type="password" id="oldPassword" name="oldPassword" />
+                            <label for="newPassword">Yeni Şifre</label>
+                            <input type="password" id="newPassword" name="newPassword" />
+                        </div>
+                        <button type="submit">Güncelle</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kullanıcı Gönderileri Bölümü Başlangıcı -->
+        <div class="userPosts">
+            <!-- Her gönderi buraya gelecek, mevcut gönderi şablonu yapısı gibi -->
+            {{range .Posts}}
+            <div class="post">
+                <div class="post__avatar">
+                    <img src="data:image/png;base64,{{$.User.ProfileImage}}" alt="" width="40px" />
+                </div>
+                <div class="post__body">
+                    <div class="post__header">
+                        <div class="post__headerText">
+                            <h3>{{$.User.Name}} {{$.User.Surname}}
+                                <span class="post__headerSpecial">
+                                    <span class="material-icons post__badge">verified</span>
+                                    @{{$.User.Username}}
+                                </span>
+                            </h3>
+                        </div>
+                        <div class="post__headerDescription">
+                            <h3>{{.PostTitle}}</h3>
+                            <p>{{.PostContent}}</p>
+                        </div>
+                        {{if .PostImage}}
+                        <img src="data:image/png;base64,{{.PostImage}}" alt="" width="100px" />
+                        {{end}}
+                    </div>
+                    <img src="" alt="" />
+                    <div class="post__footer">
+                        <!-- Beğeni, Beğenme ve Yorum İkonları -->
+                        <div class="post__icons">
+                            <form action="/profile/likepost" method="post">
+                                <button type="submit" value="{{.PostID}}" name="id"
+                                    class="material-icons">thumb_up</button>
+                                <label>{{.PostLikeCount}}</label>
+                            </form>
+                            <!-- Beğenmeme İkonu -->
+                            <form action="/profile/dislikepost" method="post">
+                                <button type="submit" value="{{.PostID}}" name="id"
+                                    class="material-icons">thumb_down</button>
+                                <label>{{.PostDislikeCount}}</label>
+                            </form>
+                            <form action="/postpage" method="get">
+                                <button type="submit" value="{{.PostID}}" name="id"
+                                    class="material-icons">comment</button>
+                                <label>Yorum Yap</label>
+                            </form>
+                        </div>
+                        <!-- Düzenle Butonu -->
+                        <button class="post__editButton">Düzenle</button>
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        </div>
+        <!-- Kullanıcı Gönderileri Bölümü Sonu -->
+    </div>
+    <!-- İçerik sonu -->
+
+    <!-- Widgetlar başlangıcı -->
+    <div class="widgets">
+        <div class="widgets__input">
+            <span class="material-icons widgets__searchIcon">search</span>
+            <input type="text" placeholder="Ara.." />
+        </div>
+
+        <div class="widgets__widgetContainer">
+            <h2>En Çok Beğenilen Gönderileriniz</h2>
+            {{range .MostLiked}}
+            <div class="post__body">
+                <div class="post__header">
+                    <div class="post__headerText">
+                        <h3>
+                            {{.UserData.Name}} {{.UserData.Surname}}
+                            <span class="post__headerSpecial">
+                                <span class="material-icons post__badge">verified</span>
+                                @{{.UserData.Username}}
+                            </span>
+                        </h3>
+                    </div>
+                    <div class="post__headerDescription">
+                        <p>{{.PostData.PostContent}}</p>
+                    </div>
+                </div>
+                {{if .PostData.PostImage}}
+                <img src="data:image/png;base64,{{.PostData.PostImage}}" alt="" />
+                {{end}}
+                <div class="post__footer">
+                    <!-- Beğeni İkonu -->
+                    <form action="/profile/likepost" method="post">
+                        <button type="submit" value="{{.PostData.PostID}}" name="id" class="material-icons"
+                            onclick="likePost()">thumb_up</button>
+                        <label>{{.PostData.PostLikeCount}}</label>
+                    </form>
+                    <!-- Beğenmeme İkonu -->
+                    <form action="/profile/dislikepost" method="post">
+                        <button type="submit" value="{{.PostData.PostID}}" name="id" class="material-icons"
+                            onclick="dislikePost()">thumb_down</button>
+                        <label>{{.PostData.PostDislikeCount}}</label>
+                    </form>
+                    <!-- Yorum İkonu -->
+                    <span class="material-icons" onclick="commentPost()">comment</span>
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+    <!-- Widgetlar sonu -->
+
+    <!-- JavaScript kodları -->
+    <script>
+        // Modal açma işlevi
+        function openEditProfile() {
+            document.getElementById('editProfileModal').style.display = 'block';
+        }
+
+        // Modal kapama işlevi
+        function closeEditProfile() {
+            document.getElementById('editProfileModal').style.display = 'none';
+        }
+
+        // Modal açma işlevi
+        function openComments() {
+            document.getElementById('yorumPopup').style.display = 'block';
+        }
+
+        // Modal kapama işlevi
+        function closeComments() {
+            document.getElementById('yorumPopup').style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>

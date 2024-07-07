@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/sifreyenileme.css"> <!-- CSS dosyasını buraya bağladık -->
+
+    <title>Şifre Yenileme</title>
+    <style>
+        /* İhtiyaç kalmadığı için bu kısmı silebilirsiniz veya özel bir stil eklemek için kullanabilirsiniz */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Şifre Yenileme Formu</h2>
+        <form action="/sifreyenileme" method="POST">
+            <label for="email">E-posta:</label><br>
+            <input type="email" id="email" name="email" required><br><br>
+            <label for="tckimlik_last3">TC Kimlik Numarasının Son 3 Hanesi:</label><br>
+            <input type="text" id="tckimlik_last3" name="tckimlik_last3" required maxlength="3"><br><br>
+            <button type="submit">Şifre Yenile</button>
+        </form>
+        <div class="message">
+            {{ if .Message }}
+                {{ .Message }}
+            {{ end }}
+        </div>
+    </div>
+</body>
+</html>
